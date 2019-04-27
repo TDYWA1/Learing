@@ -1,0 +1,131 @@
+F4b)%jFKQm7e%A33
+
+路径1
+/opt/lampp/htdocs/kodexplorer/data/User/admin/home
+
+路径2
+/var/lib/transmission/Downloads
+
+移动文件指令
+mv -f /var/lib/transmission/Downloads /opt/lampp/htdocs/kodexplorer/data/User/admin/home
+
+清除空间指令
+rm -rf /opt/lampp/htdocs/kodexplorer/data/User/admin/home/Downloads
+
+/*********************************************************************************************************************************************/
+首先安装 epel 源 :
+1
+yum install -y epel-release
+然后安装 transmission:
+1
+yum install -y transmission transmission-daemon
+这是需要启动下 , 生成默认的配置文件 :
+1
+service transmission-daemon start
+然后关闭 transmission-daemon 才能修改配置文件 . 否则配置文件修改不会生效 .
+1
+service transmission-daemon stop
+配置文件的地址是 :
+centos6 的配置文件地址是 :
+1
+vi /var/lib/transmission/.config/transmission/settings.json
+Centos7 的配置文件地址是 :
+1
+vi /var/lib/transmission/.config/transmission-daemon/settings.json
+必须要改的配置项说明 :
+"rpc-whitelist-enabled": false,  禁用白名单 . 用了白名单就只能在白名单里面的 ip 才能访问网页了
+
+其他一些配置文件说明 : 你可以自己看是否修改 :
+"download-dir": "/var/lib/transmission/Downloads"  下载完后文件存放目录
+
+"incomplete-dir": "/var/lib/transmission/Downloads",  正在下载的文件目录
+
+开启防火墙端口
+CentOS6:
+1
+2
+3
+iptables -A INPUT -p tcp --dport 9091 -j ACCEPT
+service iptables save
+service iptables restart
+CentOS7:
+1
+2
+firewall-cmd --permanent --add-port=9091/tcp
+firewall-cmd --reload
+启动 transmission
+1
+service transmission-daemon start
+把 transmission 加入开启启动
+
+1
+chkconfig transmission-daemon on
+访问网页界面
+http://vps 的 ip:9091
+
+
+
+/**********************************************************************************************************************************************/
+
+免费网盘用久了，总是被各种限速，功能不开放等恶心到，在经过几天的辗转于网络上，终于摸索出自己搭建一个私有云存储网盘，我找到的免费开源程序有owncloud，可道云kodexplorer，seafile。每一种都搭建使用过，体验和搭建简易程度上个人较喜欢可道云kodexplorer。话不多说直接上教程。
+
+1、下载xampp。
+下载命令：
+
+wget -c https://www.apachefriends.org/xampp-files/5.6.35/xampp-linux-x64-5.6.35-0-installer.run
+
+下载完成后，在当前目录可以看到一个.run可执行文件，先给文件添加相应的权限，
+
+命令为：
+
+chmod +x xampp-linux-x64-5.6.35-0-installer.run
+
+2、安装xampp
+命令为：
+
+sudo ./xampp-linux-x64-5.6.35-0-installer.run
+
+按照要求输入Y或者按回车键就可以安装成功，它的默认安装位置为：/opt/lampp。
+
+3、启动与停止xampp
+（1）启动xampp，命令为：
+
+sudo /opt/lampp/xampp start
+
+在启动之后，可以在自己的电脑或手机浏览器上输入你的云服务器IP地址，就可以看到xampp的默认页面，代表你的xampp正常使用，默认端口为80。运行出现错误，可能是端口冲突，通过查看80端口和443端口（命令为netstat -ap | grep 80）使用情况，可以修改默认的80和443端口。
+（2）停止xampp，命令为：
+
+sudo /opt/lampp/xampp stop
+
+4、下载最新版可道云
+官方下载页面：https://kodcloud.com/download/
+其中有Linux获取最新版可道云的相关命令。
+下载命令：
+
+wget http://static.kodcloud.com/update/download/kodexplorer4.37.zip
+
+创建目录：
+
+sudo mkdir kodexplorer
+
+解压命令：
+unzip kodexplorer4.37.zip -d ./kodexplorer
+进入对应文件夹，并设置权限：
+
+cd ./kodexplorer，chmod -Rf 777 ./*
+
+5、拷贝至相应的目录
+命令：
+
+sudo cp -r kodexplorer/ /opt/lampp/htdocs/
+
+进入对应文件夹，设置权限：
+
+cd /opt/lampp/htdocs
+
+chmod 777 kodexplorer
+
+chmod -R 777 kodexplorer/data/
+
+6、测试是否成功
+重新启动xampp服务，浏览器打开http://“IP地址/kodexplorer/index.php”，设置管理员密码，开始使用。

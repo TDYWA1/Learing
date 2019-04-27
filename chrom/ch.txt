@@ -1,0 +1,47 @@
+大家在用Python做爬虫的时候，会经常用到phantomjs。
+但是我们一般都是用chrome/firefox查看效果，再转成phantomjs。
+一方面这样比较费时间，另一方面phantomjs不太稳定，而且官方已经停止维护了。
+所以赶紧投身大Google的怀抱吧！
+
+如果用 yum install google-chrome -y 不能装上的话就尝试下载安装
+下载chrome
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+
+可能会遇到网路问题，你可以先下载到本地再上传
+安装chrome
+yum install ./google-chrome-stable_current_x86_64.rpm
+
+配置chromedriver
+注意chromedriver的版本，要与你安装的chrome版本对应上，这里的版本已经不是最新的。
+版本列表：http://chromedriver.chromium.org/downloads
+下载chromedriver_linux64.zip
+wget https://chromedriver.storage.googleapis.com/2.38/chromedriver_linux64.zip
+
+解压chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+
+
+为chromedriver授权
+chmod 755 chromedriver
+
+Python代码测试
+from selenium import webdriver
+
+def spider(url='http://bing.com'):
+    option = webdriver.ChromeOptions()
+    option.add_argument('--no-sandbox')  
+    option.add_argument('--headless')  
+    # 注意path
+    driver = webdriver.Chrome(executable_path='../chromedriver', chrome_options=option)
+    driver.get(url)
+    print(driver.page_source)
+spider()
+
+
+这个命令禁止沙箱模式，否则肯能会报错遇到chrome异常。
+option.add_argument('--no-sandbox')
+
+作者：绝世一只猫
+链接：https://www.jianshu.com/p/b5f3025b5cdd
+来源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
